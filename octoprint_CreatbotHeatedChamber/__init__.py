@@ -40,14 +40,34 @@ class CreatbotChamberCommandPlugin(octoprint.plugin.SettingsPlugin,
                 self._logger.info(f"Replacing M141 command with M6013: {cmd}")
         return cmd,
 
+    ## Software Update Hook
+    def get_update_information(self):
+        return dict(
+            CreatbotHeatedChamber=dict(
+                displayName=self._plugin_name,
+                displayVersion=self._plugin_version,
 
-__plugin_name__ = "Creatbot Heated Chamber"
+                type="github_release",
+                user="kforth",
+                repo="OctoPrint-CreatbotHeatedChamber",
+                current=self._plugin_version,
+                stable_branch=dict(
+                    name="Stable", branch="main", comittish=["main"]
+                ),
+                # update method: pip
+                pip="https://github.com/kforth/OctoPrint-CreatbotHeatedChamber/archive/{target_version}.zip",
+            )
+        )
+
+
+__plugin_name__ = "CreatbotHeatedChamber"
 __plugin_version__ = "1.0.0"
 __plugin_description__ = "Replace the default Marlin heated build volume command (M141) with the Creabot version (M6013)."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotChamberCommandPlugin()
 __plugin_hooks__ = {
     "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
+    "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
 }
 
 """
