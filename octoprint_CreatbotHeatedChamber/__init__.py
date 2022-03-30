@@ -2,15 +2,42 @@
 from __future__ import absolute_import, unicode_literals
 
 import octoprint.plugin
+import logging
+import json
 
-class CreatbotChamberCommandPlugin(octoprint.plugin.StartupPlugin):
+class CreatbotChamberCommandPlugin(octoprint.plugin.SettingsPlugin,
+                                   octoprint.plugin.TemplatePlugin,
+                                   octoprint.plugin.StartupPlugin):
+    def __init__(self):
+        self._logger = logging.getLogger(__name__)
+
+    ##~~ StartupPlugin
     def on_after_startup(self):
-        self._logger.info("Starting Creatbot Heated Chamber Command Plugin")
+        self._logger.info(f"CreatbotHeatedChamber Loaded")
 
-    def sending_gcode_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if gcode and gcode == "M141":
-            cmd = "M6013" + cmd[4:]
-            self._logger.info(f"Replacing M141 command with M6013: {cmd}")
+    ##~~ SettingsPlugin
+    def get_settings_defaults(self):
+        return dict(
+            enablePlugin = True
+        )
+
+    # ~~ TemplatePlugin
+    def get_template_configs(self):
+        return [
+            {
+                "type": "settings",
+                "name": "CreatbotHeatedChamber",
+                "template": "CreatbotHeatedChamber_settings.jinja2",
+                "custom_bindings": False,
+            }
+        ]
+
+    ##~~ Gcode Sending Hook
+    def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+        if self._settings.get_boolean(['enablePlugin']):
+            if gcode and gcode == "M141":
+                cmd = "M6013" + cmd[4:]
+                self._logger.info(f"Replacing M141 command with M6013: {cmd}")
         return cmd,
 
 
@@ -20,7 +47,7 @@ __plugin_description__ = "Replace the default Marlin heated build volume command
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotChamberCommandPlugin()
 __plugin_hooks__ = {
-    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.sending_gcode_hook,
+    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
 }
 
 """
