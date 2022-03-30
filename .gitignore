@@ -1,0 +1,7 @@
+__pycache__/
+build/
+*.egg_info/
+
+OctoPrint_CreatbotHeatedChamber.egg_info/
+*.pyc
+
