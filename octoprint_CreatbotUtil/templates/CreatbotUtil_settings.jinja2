@@ -1,7 +1,8 @@
 <form class="form-horizontal">
     <h3>{{ _('CreatebotHeatedChamber Options') }}</h3>
     <div class="control-group">
-        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.enable_plugin">{{ _('Enable Plugin') }}</label>
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.enable_heated_chamber_override">{{ _('Replace Heated Chamber Command (M141)') }}</label>
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.enable_serial_print_commands">{{ _('Send Start/End Serial Print Commands') }}</label>
     </div>
 
     <!--

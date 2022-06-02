@@ -5,9 +5,9 @@ import octoprint.plugin
 import logging
 
 class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
-                                   octoprint.plugin.AssetPlugin,
-                                   octoprint.plugin.TemplatePlugin,
-                                   octoprint.plugin.StartupPlugin):
+                            octoprint.plugin.AssetPlugin,
+                            octoprint.plugin.TemplatePlugin,
+                            octoprint.plugin.StartupPlugin):
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
@@ -18,8 +18,6 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
     ##~~ AssetPlugin
     def get_assets(self):
-        # Define your plugin's asset files to automatically include in the
-        # core UI here.
         return dict(
             js=["js/CreatbotUtil.js"],
         )
@@ -27,12 +25,13 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
         return {
-            "enable_plugin": True,
+            "enable_heated_chamber_override": True,
+            "enable_serial_print_commands": True,
             "profile_mode": "All",
             "profile_list": []
         }
 
-    # ~~ TemplatePlugin
+    ##~~ TemplatePlugin
     def get_template_configs(self):
         return [
             {
@@ -43,9 +42,21 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             }
         ]
 
+    ##~~ Gcode Script Hook
+    def gcode_script_hook(self, comm, script_type, script_name, *args, **kwargs):
+        if script_type == "gcode":
+            if script_name == "beforePrintStarted":
+                self._logger.info("Starting Serial Print")
+                return None, "M6006"
+            elif script_name in ("afterPrintCancelled", "afterPrintDone", "afterPrintFailed"):
+                self._logger.info("Stopping Serial Print")
+                return None, "M6007"
+        return None
+
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if self._settings.get_boolean(['enable_plugin']):
+        # TODO: profile modes?
+        if self._settings.get_boolean(['enable_heated_chamber_override']):
             if gcode and gcode == "M141":
                 cmd = "M6013" + cmd[4:]
                 self._logger.info(f"Replacing M141 command with M6013: {cmd}")
@@ -79,6 +90,7 @@ __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
     "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+    "octoprint.comm.protocol.scripts": __plugin_implementation__.gcode_script_hook
 }
 
 """
