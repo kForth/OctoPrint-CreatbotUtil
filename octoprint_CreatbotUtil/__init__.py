@@ -83,7 +83,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
 
 __plugin_name__ = "CreatbotUtil"
-__plugin_version__ = "1.0.1"
+__plugin_version__ = "1.1.1"
 __plugin_description__ = "Replace the default Marlin heated build volume command (M141) with the Creabot version (M6013)."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
