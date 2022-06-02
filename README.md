@@ -1,2 +1,2 @@
-# OctoPrint-CreatbotHeatedChamber
-Plugin for OctoPrint to replace the Marlin heated build volume command (M141) with the Creatbot command (M6013).
+# OctoPrint-CreatbotUtil
+Various utility functions to make OctoPrint work better with Creatbot printers.

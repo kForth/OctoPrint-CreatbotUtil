@@ -4,7 +4,8 @@ from __future__ import absolute_import, unicode_literals
 import octoprint.plugin
 import logging
 
-class CreatbotChamberCommandPlugin(octoprint.plugin.SettingsPlugin,
+class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
+                                   octoprint.plugin.AssetPlugin,
                                    octoprint.plugin.TemplatePlugin,
                                    octoprint.plugin.StartupPlugin):
     def __init__(self):
@@ -12,28 +13,39 @@ class CreatbotChamberCommandPlugin(octoprint.plugin.SettingsPlugin,
 
     ##~~ StartupPlugin
     def on_after_startup(self):
-        self._logger.info(f"CreatbotHeatedChamber Loaded")
+        self._logger.info(f"CreatbotUtil Loaded")
+
+
+    ##~~ AssetPlugin
+    def get_assets(self):
+        # Define your plugin's asset files to automatically include in the
+        # core UI here.
+        return dict(
+            js=["js/CreatbotUtil.js"],
+        )
 
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
-        return dict(
-            enablePlugin = True
-        )
+        return {
+            "enable_plugin": True,
+            "profile_mode": "All",
+            "profile_list": []
+        }
 
     # ~~ TemplatePlugin
     def get_template_configs(self):
         return [
             {
                 "type": "settings",
-                "name": "CreatbotHeatedChamber",
-                "template": "CreatbotHeatedChamber_settings.jinja2",
+                "name": "CreatbotUtil",
+                "template": "CreatbotUtil_settings.jinja2",
                 "custom_bindings": False,
             }
         ]
 
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if self._settings.get_boolean(['enablePlugin']):
+        if self._settings.get_boolean(['enable_plugin']):
             if gcode and gcode == "M141":
                 cmd = "M6013" + cmd[4:]
                 self._logger.info(f"Replacing M141 command with M6013: {cmd}")
@@ -42,28 +54,28 @@ class CreatbotChamberCommandPlugin(octoprint.plugin.SettingsPlugin,
     ## Software Update Hook
     def get_update_information(self):
         return dict(
-            CreatbotHeatedChamber=dict(
+            CreatbotUtil=dict(
                 displayName=self._plugin_name,
                 displayVersion=self._plugin_version,
 
                 type="github_release",
                 user="kforth",
-                repo="OctoPrint-CreatbotHeatedChamber",
+                repo="OctoPrint-CreatbotUtil",
                 current=self._plugin_version,
                 stable_branch=dict(
                     name="Stable", branch="main", comittish=["main"]
                 ),
                 # update method: pip
-                pip="https://github.com/kforth/OctoPrint-CreatbotHeatedChamber/archive/{target_version}.zip",
+                pip="https://github.com/kforth/OctoPrint-CreatbotUtil/archive/{target_version}.zip",
             )
         )
 
 
-__plugin_name__ = "CreatbotHeatedChamber"
+__plugin_name__ = "CreatbotUtil"
 __plugin_version__ = "1.0.1"
 __plugin_description__ = "Replace the default Marlin heated build volume command (M141) with the Creabot version (M6013)."
 __plugin_pythoncompat__ = ">=2.7,<4"
-__plugin_implementation__ = CreatbotChamberCommandPlugin()
+__plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
     "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,

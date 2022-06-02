@@ -1,21 +1,21 @@
 # coding=utf-8
 
 # The plugin's identifier, has to be unique
-plugin_identifier = "CreatbotHeatedChamber"
+plugin_identifier = "CreatbotUtil"
 
 # The plugin's python package, should be "octoprint_<plugin identifier>", has to be unique
-plugin_package = "octoprint_CreatbotHeatedChamber"
+plugin_package = "octoprint_CreatbotUtil"
 
 # The plugin's human readable name. Can be overwritten within OctoPrint's internal data via __plugin_name__ in the
 # plugin module
-plugin_name = "OctoPrint-CreatbotHeatedChamber"
+plugin_name = "OctoPrint-CreatbotUtil"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
 plugin_version = "1.0.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """Replace the default Marlin heated build volume command (M141) with the Creabot version (M6013)."""
+plugin_description = """Various utility functions to make OctoPrint work better with Creatbot printers."""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Kestin Goforth"
@@ -24,7 +24,7 @@ plugin_author = "Kestin Goforth"
 plugin_author_email = "kgoforth1503@gmail.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/kForth/OctoPrint-CreatbotHeatedChamber"
+plugin_url = "https://github.com/kForth/OctoPrint-CreatbotUtil"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"

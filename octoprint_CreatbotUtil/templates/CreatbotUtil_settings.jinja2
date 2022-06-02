@@ -1,0 +1,24 @@
+<form class="form-horizontal">
+    <h3>{{ _('CreatebotHeatedChamber Options') }}</h3>
+    <div class="control-group">
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.CreatbotHeatedChamber.enable_plugin">{{ _('Enable Plugin') }}</label>
+    </div>
+
+    <h4>Printer Profiles:</h4>
+    <div class="control-group">
+    <fieldset id="profile_mode" data-bind="value: settings.plugins.CreatbotHeatedChamber.profile_mode">
+        <label class="radio"><input name="profile_mode" type="radio" value="All" checked>{{ _('Enable For All Printer Profiles') }}</label>
+        <label class="radio"><input name="profile_mode" type="radio" value="Select">{{ _('Enable For Selected Printer Profiles') }}</label>
+    </fieldset>
+
+    <label class="span9">
+        <select class="span9" id="profile_list" multiple="true" data-bind="options: FileList,
+                            optionsText: function(item) {
+                                return item.path;
+                            },
+                            selectedOptions: settings.plugins.CreatbotHeatedChamber.profile_list,
+                            event: { }">
+        </select>
+    </label>
+    </div>
+</form>
