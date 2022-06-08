@@ -11,6 +11,17 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
+    def _enabled_for_current_profile(self):
+        if self._settings.get(['profile_mode']) == 'All':
+            return True
+        profile = self._printer_profile_manager.get_current() # _or_default()?
+        if not profile:
+            return False
+        profile_id = profile.get('id', False)
+        if not profile_id:
+            return False
+        return profile_id in self._settings.get(['profile_list'])
+
     ##~~ StartupPlugin
     def on_after_startup(self):
         self._logger.info(f"CreatbotUtil Loaded")
@@ -25,8 +36,9 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
         return {
-            "enable_heated_chamber_override": True,
-            "enable_serial_print_commands": True,
+            "override_heated_chamber_command": True,
+            "send_start_stop_commands": True,
+            "send_pause_resume_commands": True,
             "profile_mode": "All",
             "profile_list": []
         }
@@ -36,7 +48,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
         return [
             {
                 "type": "settings",
-                "name": "CreatbotUtil",
+                "name": "Creatbot Util",
                 "template": "CreatbotUtil_settings.jinja2",
                 "custom_bindings": False,
             }
@@ -44,22 +56,32 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
     ##~~ Gcode Script Hook
     def gcode_script_hook(self, comm, script_type, script_name, *args, **kwargs):
-        if script_type == "gcode":
-            if script_name == "beforePrintStarted":
-                self._logger.info("Starting Serial Print")
-                return None, "M6006"
-            elif script_name in ("afterPrintCancelled", "afterPrintDone", "afterPrintFailed"):
-                self._logger.info("Stopping Serial Print")
-                return None, "M6007"
+        self._logger.warn(script_name, script_type)
+        if script_type == "gcode" and self._enabled_for_current_profile():
+            if self._settings.get_boolean(['send_start_stop_commands']):
+                if script_name == "beforePrintStarted":
+                    self._logger.info("Starting Serial Print")
+                    return None, "M6006"
+                if script_name in ("afterPrintCancelled", "afterPrintDone", "afterPrintFailed"):
+                    self._logger.info("Stopping Serial Print")
+                    return None, "M6007"
+
+            if self._settings.get_boolean(['send_pause_resume_commands']):
+                if script_name == "afterPrintPaused":
+                    self._logger.info("Pausing Print")
+                    return None, "M6001"
+                if script_name == "beforePrintResumed":
+                    self._logger.info("Resuming Print")
+                    return None, "M6002"
         return None
 
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        # TODO: profile modes?
-        if self._settings.get_boolean(['enable_heated_chamber_override']):
-            if gcode and gcode == "M141":
-                cmd = "M6013" + cmd[4:]
-                self._logger.info(f"Replacing M141 command with M6013: {cmd}")
+        if self._enabled_for_current_profile():
+            if self._settings.get_boolean(['override_heated_chamber_command']):
+                if gcode and gcode == "M141":
+                    cmd = "M6013" + cmd[4:]
+                    self._logger.info(f"Replacing M141 command with M6013: {cmd}")
         return cmd,
 
     ## Software Update Hook
@@ -84,7 +106,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
 __plugin_name__ = "CreatbotUtil"
 __plugin_version__ = "1.1.1"
-__plugin_description__ = "Replace the default Marlin heated build volume command (M141) with the Creabot version (M6013)."
+__plugin_description__ = "Various utility functions to make OctoPrint work better with Creatbot printers."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
@@ -95,19 +117,19 @@ __plugin_hooks__ = {
 
 """
 Other Creatbot GCode Commands:
- * M6001 - Pause print same as M600 but not retracting filament.
- * M6002 - Resume print from M6001.
+ DONE? * M6001 - Pause print same as M600 but not retracting filament.
+ DONE? * M6002 - Resume print from M6001.
  * M6003 - Unload filament after detect filament broken
  * M6004 - Resume print from accident
  * M6005 - Home & Resume print from accident
- * M6006 - Start Serial print
- * M6007 - Stop Serial print
+ DONE * M6006 - Start Serial print
+ DONE * M6007 - Stop Serial print
  * M6008 - Set used Time											(M6008 S0.00)
  * M6009 - Set regSN												(M6009 S0.00)
  * M6010 - Adjust the Z Value after adjust zprobe_zoffset		    (Requires HAS_BED_PROBE)
  * M6011 - (like M106) Set Temp fan.								(Requires HAS_AUTO_FAN)
  * M6012 - (like M106) Set Air fan.									(Requires HAS_AIR_FAN)
- * M6013 - (like M140) Set Chamber Temp. 							(Requires HOTWIND_SYSTEM)
+ DONE * M6013 - (like M140) Set Chamber Temp. 							(Requires HOTWIND_SYSTEM)
  * M6014 - (include G29) Probe the bed.								(Requires HAS_LEVELING)
  * M6020 - (like M20) List USB
  * M6021 - (like M21) Init USB
