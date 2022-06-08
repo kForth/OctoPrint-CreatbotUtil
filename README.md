@@ -10,9 +10,9 @@ Various utility functions to make OctoPrint work better with Creatbot printers.
 
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html).
 
-Open OctoPrint Settings (wrench icon) -> Plugin Mananger -> Get More -> Paste the following url in the "... from URL" field. 
+Open OctoPrint Settings (wrench icon) -> Plugin Mananger -> Get More -> Paste the url from below in the "... from URL" field. 
 
-> https://github.com/kforth/OctoPrint-CreatbotUtil/archive/master.zip
+> https://github.com/kForth/OctoPrint-CreatbotUtil/archive/main.zip
 
 Retart the instance after installing.
 
