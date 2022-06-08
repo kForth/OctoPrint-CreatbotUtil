@@ -134,7 +134,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
             if new_gcode:
                 cmd = new_gcode + cmd[len(gcode):]
-                self._logger.info("Replacing {} command with {}: {}", gcode, new_gcode, cmd)
+                self._logger.info("Replacing %s command with %s: %s", gcode, new_gcode, cmd)
         return cmd,
 
     ## Software Update Hook
