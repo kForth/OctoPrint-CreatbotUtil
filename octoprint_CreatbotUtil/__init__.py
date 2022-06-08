@@ -105,7 +105,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
 
 __plugin_name__ = "CreatbotUtil"
-__plugin_version__ = "1.1.1"
+__plugin_version__ = "1.2.0"
 __plugin_description__ = "Various utility functions to make OctoPrint work better with Creatbot printers."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
