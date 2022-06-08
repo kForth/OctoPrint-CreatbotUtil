@@ -61,19 +61,20 @@ $(function () {
       })
 
       self.unloadButton = $("<button>", {
-        id: 'job_unload',
-        class: 'btn btn-block',
+        // id: 'job_unload',
+        text: 'Unload Filament',
+        class: 'btn btn-block control-box',
         title: 'Unload filament from the active tool.',
+        // 'data-bind': 'enabled: isOperational() && (!isPrinting() || isPaused())',
         // disabled: true,
-      })
-        .on('click', self.onUnloadFilament)
-        .append(
-          $('<i class="fas fa-undo-alt"></i>'),
-          $('<span> Unload</span>')
-        );
+      }).on('click', self.onUnloadFilament);
+        // .append(
+        //   $('<i class="fas fa-undo-alt"></i>'),
+        //   $('<span> Unload</span>')
+        // );
       self.controlDiv.append(self.unloadButton);
 
-      $('#state > .accordion-inner').append(self.controlDiv);
+      $('#control-jog-general > div').append(self.controlDiv);
     };
 
     self.initializeControls = function() {
