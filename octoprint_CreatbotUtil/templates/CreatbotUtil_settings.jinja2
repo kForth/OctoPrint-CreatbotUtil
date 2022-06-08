@@ -1,42 +1,47 @@
-<form class="form-horizontal">
-    <h3>{{ _('Creatbot Util Options') }}</h3>
+<h3>{{ _('Creatbot Util Options') }}</h3>
+
+<form class="form-horizontal" onsubmit="return false;">
+
     <div class="control-group">
+        <legend>Features</legend>
         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.override_heated_chamber_command">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceHeatedChamberCommand">
             {{ _('Substitute Heated Chamber Command (M141 -> M6013)') }}
         </label>
         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.send_start_stop_commands">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
             {{ _('Send Start/End Serial Print Commands (M6006 & M6007)') }}
         </label>
         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.send_pause_resume_commands">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
             {{ _('Send Creatbot Pause/Resume Print Commands (M6001 & M6002)') }}
         </label>
     </div>
 
-    
-    <h4>Printer Profiles:</h4>
     <div class="control-group">
-    <fieldset id="profile_mode" data-bind="value: settings.plugins.CreatbotUtil.profile_mode">
-        <label class="radio">
-            <input name="profile_mode" type="radio" value="All" checked>
-            {{ _('Enable For All Printer Profiles') }}
-        </label>
-        <label class="radio">
-            <input name="profile_mode" type="radio" value="Select">
-            {{ _('Enable For Selected Printer Profiles') }}
-        </label>
-    </fieldset>
+        <legend>Printer Profiles</legend>     
 
-    <label class="span9">
-        <select class="span9" id="profile_list" multiple="true" data-bind="options: FileList,
-                            optionsText: function(item) {
-                                return item.path;
-                            },
-                            selectedOptions: settings.plugins.CreatbotUtil.profile_list,
-                            event: { }">
-        </select>
-    </label>
+        <fieldset class="control-group" id="creatbot-util-profile-mode">
+            <label class="radio">
+                <input type="radio" value="ALL" name="creatbotUtilProfileModeGroup" data-bind="checked: settings.plugins.CreatbotUtil.profileMode" checked>
+                {{ _('Enable For All Printer Profiles') }}
+            </label>
+            <label class="radio">
+                <input type="radio" value="SELECT" name="creatbotUtilProfileModeGroup" data-bind="checked: settings.plugins.CreatbotUtil.profileMode">
+                {{ _('Enable For Selected Profiles Only') }}
+            </label>
+        </fieldset>
+
+        <label class="control-group">
+            {{ _('Selected Profiles') }}:
+            <br>
+            <select class="span9" id="creatbot-util-profile-list" multiple="true" data-bind="
+                options: printerProfiles.profiles.items(),
+                optionsValue: item => item.id,
+                optionsText: item => item.name,
+                selectedOptions: settings.plugins.CreatbotUtil.selectedProfiles,
+                event: { }">
+            </select>
+        </label>
     </div>
 </form>

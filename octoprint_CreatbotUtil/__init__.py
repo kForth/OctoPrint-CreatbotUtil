@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+from enum import Enum
 
 import octoprint.plugin
 import logging
+
+class CreatbotUtilProfileModes(Enum):
+    ALL = 0
+    SELECT = 1
 
 class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
@@ -10,21 +15,34 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.StartupPlugin):
     def __init__(self):
         self._logger = logging.getLogger(__name__)
+        
+        self._replaceHeatedChamberCommand = True
+        self._sendStartStopCommands = True
+        self._sendPauseResumeCommands = True
+        self._profileMode = CreatbotUtilProfileModes.ALL.name
+        self._selectedProfiles = []
+
+    def initialize(self):
+        self._replaceHeatedChamberCommand = self._settings.get_boolean(["replaceHeatedChamberCommand"])
+        self._sendStartStopCommands = self._settings.get_boolean(["sendStartStopCommands"])
+        self._sendPauseResumeCommands = self._settings.get_boolean(["sendPauseResumeCommands"])
+        self._profileMode = self._settings.get(["profileMode"])
+        self._selectedProfiles = self._settings.get(["selectedProfiles"])
 
     def _enabled_for_current_profile(self):
-        if self._settings.get(['profile_mode']) == 'All':
+        if self._profileMode == CreatbotUtilProfileModes.ALL.name:
             return True
-        profile = self._printer_profile_manager.get_current() # _or_default()?
+        profile = self._printer_profile_manager.get_current()
         if not profile:
             return False
         profile_id = profile.get('id', False)
         if not profile_id:
             return False
-        return profile_id in self._settings.get(['profile_list'])
+        return profile_id in self._selectedProfiles
 
     ##~~ StartupPlugin
     def on_after_startup(self):
-        self._logger.info(f"CreatbotUtil Loaded")
+        self._logger.info("CreatbotUtil Loaded")
 
 
     ##~~ AssetPlugin
@@ -36,12 +54,16 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
         return {
-            "override_heated_chamber_command": True,
-            "send_start_stop_commands": True,
-            "send_pause_resume_commands": True,
-            "profile_mode": "All",
-            "profile_list": []
+            "replaceHeatedChamberCommand": True,
+            "sendStartStopCommands": True,
+            "sendPauseResumeCommands": True,
+            "profileMode": CreatbotUtilProfileModes.ALL.name,
+            "selectedProfiles": []
         }
+
+    def on_settings_save(self, data):
+        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+        self.initialize()
 
     ##~~ TemplatePlugin
     def get_template_configs(self):
@@ -56,9 +78,8 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
     ##~~ Gcode Script Hook
     def gcode_script_hook(self, comm, script_type, script_name, *args, **kwargs):
-        self._logger.warn(script_name, script_type)
         if script_type == "gcode" and self._enabled_for_current_profile():
-            if self._settings.get_boolean(['send_start_stop_commands']):
+            if self._sendStartStopCommands:
                 if script_name == "beforePrintStarted":
                     self._logger.info("Starting Serial Print")
                     return None, "M6006"
@@ -66,7 +87,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
                     self._logger.info("Stopping Serial Print")
                     return None, "M6007"
 
-            if self._settings.get_boolean(['send_pause_resume_commands']):
+            if self._sendPauseResumeCommands:
                 if script_name == "afterPrintPaused":
                     self._logger.info("Pausing Print")
                     return None, "M6001"
@@ -78,7 +99,7 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         if self._enabled_for_current_profile():
-            if self._settings.get_boolean(['override_heated_chamber_command']):
+            if self._replaceHeatedChamberCommand:
                 if gcode and gcode == "M141":
                     cmd = "M6013" + cmd[4:]
                     self._logger.info(f"Replacing M141 command with M6013: {cmd}")
