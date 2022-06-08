@@ -7,25 +7,29 @@
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
             {{ _('Send Pause/Resume Print Commands') }}
-            <span class="label">M6001/M6002</span>
+            <span class="label label-info">M6001/M6002</span>
         </label>
 
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
             {{ _('Send Start/End Serial Print Commands') }}
-            <span class="label">M6006/M6007</span>
+            <span class="label label-info">M6006/M6007</span>
         </label>
 
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceHeatedChamberCommand">
             {{ _('Replace Heated Chamber Command') }}
-            <span class="label">M6013</span>
+            <span class="label label-important">M141</span>
+            <i class="fas fa-caret-right"></i>
+            <span class="label label-info">M6013</span>
         </label>
 
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceSdCommandsWithUsb">
             {{ _('Replace SD Card with USB Disk') }}
-            <span class="label">M6020-M6033</span>
+            <span class="label label-important">M20-M32,M92</span>
+            <i class="fas fa-caret-right"></i>
+            <span class="label label-info">M6020-M6033</span>
         </label>
     </div>
 
