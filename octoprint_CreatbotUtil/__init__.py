@@ -5,6 +5,8 @@ from enum import Enum
 import octoprint.plugin
 import logging
 
+API_CMD_UNLOAD = "unloadFilament"
+
 GCODE_PAUSE_PRINT =         "M6001"  # Pause print same as M600 but not retracting filament.
 GCODE_RESUME_PRINT =        "M6002" # Resume print from M6001.
 GCODE_START_SERIAL_PRINT =  "M6006" # Start Serial print
@@ -35,7 +37,9 @@ class CreatbotUtilProfileModes(Enum):
 class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.TemplatePlugin,
-                            octoprint.plugin.StartupPlugin):
+                            octoprint.plugin.StartupPlugin,
+	                        octoprint.plugin.SimpleApiPlugin,
+                            octoprint.plugin.EventHandlerPlugin):
 
     def __init__(self):
         self._logger = logging.getLogger(__name__)
@@ -70,6 +74,22 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     def on_after_startup(self):
         self._logger.info("CreatbotUtil Loaded")
 
+    ##~~ SimpleApiPlugin
+    def get_api_commands(self):
+        return {
+            API_CMD_UNLOAD: []
+        }
+        
+    def on_api_command(self, command, data):
+        if command == API_CMD_UNLOAD:
+            # TODO: Double check temperature and print state
+            # if current_user.is_anonymous():
+            #     return "Insufficient rights", 403
+            try:
+                self.unloadFilament()
+            except Exception as error:
+                self._logger.info("Unload Error: %s", error.message)
+                return str(error.message), 405
 
     ##~~ AssetPlugin
     def get_assets(self):
@@ -143,7 +163,6 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             CreatbotUtil=dict(
                 displayName=self._plugin_name,
                 displayVersion=self._plugin_version,
-
                 type="github_release",
                 user="kforth",
                 repo="OctoPrint-CreatbotUtil",
@@ -156,6 +175,9 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             )
         )
 
+    def unloadFilament(self):
+        self._logger.warn("Unloading Filament")
+
 
 __plugin_name__ = "CreatbotUtil"
 __plugin_version__ = "1.2.0"
@@ -163,8 +185,8 @@ __plugin_description__ = "Various utility functions to make OctoPrint work bette
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
-    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
     "octoprint.comm.protocol.scripts": __plugin_implementation__.gcode_script_hook
 }
 
