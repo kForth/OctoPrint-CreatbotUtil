@@ -9,6 +9,10 @@
             {{ _('Substitute Heated Chamber Command (M141 -> M6013)') }}
         </label>
         <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceSdCommandsWithUsb">
+            {{ _('Use USB Drive instead of SD Card') }}
+        </label>
+        <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
             {{ _('Send Start/End Serial Print Commands (M6006 & M6007)') }}
         </label>
