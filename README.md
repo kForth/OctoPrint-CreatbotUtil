@@ -1,10 +1,15 @@
 # OctoPrint-CreatbotUtil
+
 Various utility functions to make OctoPrint work better with Creatbot printers.
 
 ## Features:
+
 - Send "Pause/Resume" commands with OctoPrint state changes. (M6001 & M6002)
+
 - Send "Start/Stop Serial Print" commands with OctoPrint state changes. (M6006 & M6007)
+
 - Substitute Marlin Heated Chamber command for Creatbot version. (M141 -> M6013)
+
 
 ## Setup
 
