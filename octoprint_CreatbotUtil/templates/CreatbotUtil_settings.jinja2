@@ -5,20 +5,20 @@
     <div class="control-group">
         <legend>Features</legend>
         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceHeatedChamberCommand">
-            {{ _('Substitute Heated Chamber Command (M141 -> M6013)') }}
-        </label>
-        <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceSdCommandsWithUsb">
-            {{ _('Use USB Drive instead of SD Card') }}
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
+            {{ _('Send Pause/Resume Print Commands (M6001 & M6002)') }}
         </label>
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
             {{ _('Send Start/End Serial Print Commands (M6006 & M6007)') }}
         </label>
         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
-            {{ _('Send Creatbot Pause/Resume Print Commands (M6001 & M6002)') }}
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceHeatedChamberCommand">
+            {{ _('Replace Heated Chamber Command (M141 -> M6013)') }}
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceSdCommandsWithUsb">
+            {{ _('Replace SD Card with USB Disk') }}
         </label>
     </div>
 
