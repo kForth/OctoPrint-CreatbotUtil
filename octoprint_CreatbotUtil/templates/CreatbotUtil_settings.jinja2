@@ -4,11 +4,16 @@
 
     <div class="control-group">
         <legend>Features</legend>
+        {# <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.showControls">
+            {{ _('Show Controls in Printer State') }}
+        </label>
+
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
             {{ _('Send Pause/Resume Print Commands') }}
             <span class="label label-info">M6001/M6002</span>
-        </label>
+        </label> #}
 
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
