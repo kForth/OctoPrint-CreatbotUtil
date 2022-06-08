@@ -1,20 +1,18 @@
 /*
- * View model for OctoPrint-CreatbotHeatedChamber
+ * View model for OctoPrint-CreatbotUtil
  *
  * Author: Kestin Goforth
  * License: AGPLv3
  */
 $(function() {
-    console.log("Creatbot Start");
-
-    function CreatbotHeatedChamberViewModel(parameters) {
+    function CreatbotUtilViewModel(parameters) {
       var self = this;
   
       self.settingsViewModel = parameters[0];
       self.printerStateViewModel = parameters[1];
       self.version = undefined;
 
-        self.ProfileList = [];
+      self.profile_list = [];
     }
   
     /* view model class, parameters for constructor, container to bind to
@@ -22,9 +20,9 @@ $(function() {
      * and a full list of the available options.
      */
     OCTOPRINT_VIEWMODELS.push({
-      construct: CreatbotHeatedChamberViewModel,
-      dependencies: ["settingsViewModel"],
-      elements: ["#settings_plugin_CreatbotHeatedChamber"]
+      construct: CreatbotUtilViewModel,
+      dependencies: [/*"settingsViewModel"*/],
+      elements: [/*"#settings_plugin_CreatbotUtil"*/]
     });
   });
   
