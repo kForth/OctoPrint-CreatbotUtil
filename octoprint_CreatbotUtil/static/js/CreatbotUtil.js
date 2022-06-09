@@ -21,6 +21,8 @@ $(function () {
       // Enable/Disable the profile list when the settings page is opened.
       $("#settings_plugin_CreatbotUtil_link").on('click', self.onProfileModeChange);
     };
+
+    self.initializeSettings();
   }
 
   /* view model class, parameters for constructor, container to bind to

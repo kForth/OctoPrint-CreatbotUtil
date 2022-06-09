@@ -20,22 +20,24 @@ GCODE_STOP_SERIAL_PRINT =   "M6007" # Stop Serial print
 GCODE_OG_CHAMBER_TEMP =     "M141"  # Original Marlin 'Set Chamber Temp' command
 GCODE_SET_CHAMBER_TEMP =    "M6013" # (like M140) Set Chamber Temp.
 # GCODE_PROBE_BED =           "M6014" # (include G29) Probe the bed
-GCODE_SD_TO_USB = {
-    # "SD Command": "USB Command"
-    'M20': "M6020", # List USB                                          
-    'M21': "M6021", # Init USB                                          
-    'M22': "M6022", # Release USB                                       
-    'M23': "M6023", # Select USB file                                   
-    'M24': "M6024", # Start/resume USB print                            
-    'M25': "M6025", # Pause USB print                                   
-    'M26': "M6026", # Set USB position in bytes
-    'M27': "M6027", # Report USB print status
-    'M28': "M6028", # Start USB write. (Not Implemented in Firmware)
-    'M29': "M6029", # Stop USB write. (Not Implemented in Firmware)
-    'M30': "M6030", # Delete file from USB. (Not Implemented in Firmware)
-    'M32': "M6032", # Select file and start SD print    
-    'M92': "M6033", # Start USB write (logging) (Not Implemented in Firmware)
-}
+# GCODE_SD_TO_USB = {
+#     # "SD Command": "USB Command"
+#     'M20': "M6020", # List USB                                          
+#     'M21': "M6021", # Init USB                                          
+#     'M22': "M6022", # Release USB                                       
+#     'M23': "M6023", # Select USB file                                   
+#     'M24': "M6024", # Start/resume USB print                            
+#     'M25': "M6025", # Pause USB print                                   
+#     'M26': "M6026", # Set USB position in bytes
+#     'M27': "M6027", # Report USB print status
+#     'M28': "M6028", # Start USB write. (Not Implemented in Firmware)
+#     'M29': "M6029", # Stop USB write. (Not Implemented in Firmware)
+#     'M30': "M6030", # Delete file from USB. (Not Implemented in Firmware)
+#     'M32': "M6032", # Select file and start SD print    
+#     # 'M33': "",    # Get Long Path (Not Implemented in Firmware)
+#     # 'M34': "",    # SDCard Sorting (Not Implemented in Firmware)
+#     'M92': "M6033", # Start USB write (logging) (Not Implemented in Firmware)
+# }
 
 class CreatbotUtilProfileModes(Enum):
     ALL = 0
@@ -49,16 +51,18 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     def __init__(self):
         self._logger = logging.getLogger(__name__)
         
-        self._replaceHeatedChamberCommand = True
-        self._replaceSdCommandsWithUsb = True
+        # self._replaceSdCommandsWithUsb = True
+        # self._sendPauseResumeCommands = True
         self._sendStartStopCommands = True
+        self._replaceHeatedChamberCommand = True
         self._profileMode = CreatbotUtilProfileModes.ALL.name
         self._selectedProfiles = []
 
     def initialize(self):
-        self._replaceHeatedChamberCommand = self._settings.get_boolean(["replaceHeatedChamberCommand"])
-        self._replaceSdCommandsWithUsb = self._settings.get_boolean(["replaceSdCommandsWithUsb"])
+        # self._replaceSdCommandsWithUsb = self._settings.get_boolean(["replaceSdCommandsWithUsb"])
+        # self._sendPauseResumeCommands = self._settings.get_boolean(["sendPauseResumeCommands"])
         self._sendStartStopCommands = self._settings.get_boolean(["sendStartStopCommands"])
+        self._replaceHeatedChamberCommand = self._settings.get_boolean(["replaceHeatedChamberCommand"])
         self._profileMode = self._settings.get(["profileMode"])
         self._selectedProfiles = self._settings.get(["selectedProfiles"])
 
@@ -86,9 +90,10 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
         return {
-            "replaceSdCommandsWithUsb": True,
-            "replaceHeatedChamberCommand": True,
+            # "replaceSdCommandsWithUsb": True,
+            # "sendPauseResumeCommands": True,
             "sendStartStopCommands": True,
+            "replaceHeatedChamberCommand": True,
             "profileMode": CreatbotUtilProfileModes.ALL.name,
             "selectedProfiles": []
         }
@@ -118,6 +123,14 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
                 if script_name in ("afterPrintCancelled", "afterPrintDone", "afterPrintFailed"):
                     self._logger.info("Stopping Serial Print")
                     return None, GCODE_STOP_SERIAL_PRINT
+
+            # if self._sendPauseResumeCommands:
+            #     if script_name == "afterPrintPaused":
+            #         self._logger.info("Pausing Print")
+            #         return None, GCODE_PAUSE_PRINT
+            #     if script_name == "beforePrintResumed":
+            #         self._logger.info("Resuming Print")
+            #         return None, GCODE_RESUME_PRINT
         return None
 
     ##~~ Gcode Sending Hook
@@ -126,8 +139,8 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             new_gcode = False
             if self._replaceHeatedChamberCommand and gcode == GCODE_OG_CHAMBER_TEMP:
                 new_gcode = GCODE_SET_CHAMBER_TEMP
-            if self._replaceSdCommandsWithUsb and gcode in GCODE_SD_TO_USB:
-                new_gcode = GCODE_SD_TO_USB[gcode]
+            # if self._replaceSdCommandsWithUsb and gcode in GCODE_SD_TO_USB:
+            #     new_gcode = GCODE_SD_TO_USB[gcode]
 
             if new_gcode:
                 cmd = new_gcode + cmd[len(gcode):]

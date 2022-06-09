@@ -2,13 +2,15 @@
 
 Various utility functions to make OctoPrint work better with Creatbot printers.
 
+This plugin has been tested to work well with the Creatbot F430 but should work with other Creatbot printers.
+
+Your Creatbot firmware may need to be upgraded to at least v5.6, the original v5.5 firmware that shipped with my Creatbot F430 did not support the Heated Chamber (M6013) command.
+
 ## Features:
 
 - Send "Start/Stop Serial Print" commands with OctoPrint state changes.
 
-- Substitute Marlin Heated Chamber command for Creatbot version.
-
-- Use the printer's USB Disk in place of a standard SD Card.
+- Use Creatbot Heated Chamber command instead of default Marlin version (M141).
 
 
 ## Setup
