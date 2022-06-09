@@ -6,12 +6,15 @@ This plugin has been tested to work well with the Creatbot F430 but should work 
 
 Your Creatbot firmware may need to be upgraded to at least v5.6, the original v5.5 firmware that shipped with my Creatbot F430 did not support the Heated Chamber (M6013) command.
 
-## Features:
+## Features
 
 - Send "Start/Stop Serial Print" commands with OctoPrint state changes.
 
 - Use Creatbot Heated Chamber command instead of default Marlin version (M141).
 
+## Screenshot
+
+<img src="https://github.com/kForth/OctoPrint-CreatbotUtil/blob/media/octoprint-creatbot-util-settings-screenshot.png?raw=true" alt="Settings Page Screenshot" title="Settings Page Screenshot" style="max-width: 80%">
 
 ## Setup
 
