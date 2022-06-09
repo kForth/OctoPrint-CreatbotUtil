@@ -1,16 +1,13 @@
-# OctoPrint-CreatbotUtil
 
-Various utility functions to make OctoPrint work better with Creatbot printers.
+# Creatbot Util
 
-This plugin has been tested to work well with the Creatbot F430 but should work with other Creatbot printers.
-
-Your Creatbot firmware may need to be upgraded to at least v5.6, the original v5.5 firmware that shipped with my Creatbot F430 did not support the Heated Chamber (M6013) command.
+This plugin add various utility functions to make OctoPrint work better with Creatbot printers.
 
 ## Features
 
-- Send "Start/Stop Serial Print" commands with OctoPrint state changes.
+- Send "Start/Stop Serial Print" commands whenever a print is started, cancelled, or finished (M6006 & M6007).
 
-- Use Creatbot Heated Chamber command instead of default Marlin version (M141).
+- Replace the Marlin 'Set Chamber Temperature' command (M141) with the Creatbot command (M6013).
 
 ## Screenshot
 
@@ -25,6 +22,12 @@ Open OctoPrint Settings (wrench icon) -> Plugin Mananger -> Get More -> Paste th
 > https://github.com/kForth/OctoPrint-CreatbotUtil/archive/main.zip
 
 Retart the instance after installing.
+
+## Notes
+
+This plugin should work for most/all Creatbot 3D Printers but has only been tested with a Creatbot F430.
+
+Your Creatbot firmware may need to be upgraded to at least v5.6, the original v5.5 firmware that shipped with my Creatbot F430 did not support the Heated Chamber (M6013) command.
 
 
 ## License
