@@ -14,7 +14,7 @@ Your Creatbot firmware may need to be upgraded to at least v5.6, the original v5
 
 ## Screenshot
 
-<img src="https://github.com/kForth/OctoPrint-CreatbotUtil/blob/media/octoprint-creatbot-util-settings-screenshot.png?raw=true" alt="Settings Page Screenshot" title="Settings Page Screenshot" style="max-width: 80%">
+![Settings Page Screenshot](https://github.com/kForth/OctoPrint-CreatbotUtil/blob/media/octoprint-creatbot-util-settings-screenshot.png?raw=true)
 
 ## Setup
 
