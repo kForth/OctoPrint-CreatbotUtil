@@ -43,10 +43,10 @@ class CreatbotUtilProfileModes(Enum):
     ALL = 0
     SELECT = 1
 
-class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
-                            octoprint.plugin.AssetPlugin,
-                            octoprint.plugin.TemplatePlugin,
-                            octoprint.plugin.StartupPlugin):
+class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
+                         octoprint.plugin.SettingsPlugin,
+                         octoprint.plugin.AssetPlugin,
+                         octoprint.plugin.TemplatePlugin):
 
     def __init__(self):
         self._logger = logging.getLogger(__name__)
@@ -77,15 +77,11 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             return False
         return profile_id in self._selectedProfiles
 
-    ##~~ StartupPlugin
-    def on_after_startup(self):
-        self._logger.info("CreatbotUtil Loaded")
-
     ##~~ AssetPlugin
     def get_assets(self):
-        return dict(
-            js=["js/CreatbotUtil.js"],
-        )
+        return {
+            'js': ["js/CreatbotUtil.js"],
+        }
 
     ##~~ SettingsPlugin
     def get_settings_defaults(self):
@@ -113,25 +109,24 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
             }
         ]
 
-    ##~~ Gcode Script Hook
-    def gcode_script_hook(self, comm, script_type, script_name, *args, **kwargs):
-        if script_type == "gcode" and self._enabled_for_current_profile():
+    # ~~ EventHandlerPlugin hook
+    def on_event(self, event, payload):
+        if self._enabled_for_current_profile():
             if self._sendStartStopCommands:
-                if script_name == "beforePrintStarted":
+                if event == "PrintStarted":
                     self._logger.info("Starting Serial Print")
-                    return None, GCODE_START_SERIAL_PRINT
-                if script_name in ("afterPrintCancelled", "afterPrintDone", "afterPrintFailed"):
+                    self._printer.commands([GCODE_START_SERIAL_PRINT])
+                elif event in ("PrintStopped", "PrintCancelled", "PrintDone"):
                     self._logger.info("Stopping Serial Print")
-                    return None, GCODE_STOP_SERIAL_PRINT
-
+                    self._printer.commands([GCODE_STOP_SERIAL_PRINT])
+        
             # if self._sendPauseResumeCommands:
-            #     if script_name == "afterPrintPaused":
+            #     if event == "PrintPaused":
             #         self._logger.info("Pausing Print")
-            #         return None, GCODE_PAUSE_PRINT
-            #     if script_name == "beforePrintResumed":
+            #         self._printer.commands([GCODE_PAUSE_PRINT])
+            #     if event == "PrintResumed":
             #         self._logger.info("Resuming Print")
-            #         return None, GCODE_RESUME_PRINT
-        return None
+            #         self._printer.commands([GCODE_RESUME_PRINT])
 
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
@@ -167,13 +162,12 @@ class CreatbotUtilPlugin(octoprint.plugin.SettingsPlugin,
 
 
 __plugin_name__ = "CreatbotUtil"
-__plugin_version__ = "1.0.0"
+__plugin_version__ = "1.1.0"
 __plugin_description__ = "Various utility functions to make OctoPrint work better with Creatbot printers."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
-    "octoprint.comm.protocol.scripts": __plugin_implementation__.gcode_script_hook
+    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook
 }
 
