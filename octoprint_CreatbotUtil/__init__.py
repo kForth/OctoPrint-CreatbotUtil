@@ -69,14 +69,17 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     # ~~ EventHandlerPlugin hook
     def on_event(self, event, payload):
-        if self._enabled_for_current_profile():
-            if self._sendStartStopCommands:
-                if event == "PrintStarted":
-                    self._logger.info("Starting Serial Print")
-                    self._printer.commands([GCODE_START_SERIAL_PRINT])
-                elif event in ("PrintStopped", "PrintCancelled", "PrintDone"):
-                    self._logger.info("Stopping Serial Print")
-                    self._printer.commands([GCODE_STOP_SERIAL_PRINT])
+        if event not in ("PrintStarted", "PrintStopped", "PrintCancelled", "PrintDone"):
+            return
+        if not self._enabled_for_current_profile():
+            return
+        if self._sendStartStopCommands:
+            if event == "PrintStarted":
+                self._logger.info("Starting Serial Print")
+                self._printer.commands([GCODE_START_SERIAL_PRINT])
+            elif event in ("PrintStopped", "PrintCancelled", "PrintDone"):
+                self._logger.info("Stopping Serial Print")
+                self._printer.commands([GCODE_STOP_SERIAL_PRINT])
 
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
