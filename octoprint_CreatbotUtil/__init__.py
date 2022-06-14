@@ -35,12 +35,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         if self._profileMode == PROFILE_MODE_ALL:
             return True
         profile = self._printer_profile_manager.get_current()
-        if not profile:
-            return False
-        profile_id = profile.get('id', False)
-        if not profile_id:
-            return False
-        return profile_id in self._selectedProfiles
+        return profile and profile.get('id', None) in self._selectedProfiles
 
     ##~~ AssetPlugin
     def get_assets(self):
