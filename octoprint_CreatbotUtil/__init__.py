@@ -10,9 +10,7 @@ GCODE_STOP_SERIAL_PRINT =   "M6007" # Stop Serial print
 GCODE_OG_CHAMBER_TEMP =     "M141"  # Original Marlin 'Set Chamber Temp' command
 GCODE_SET_CHAMBER_TEMP =    "M6013" # (like M140) Set Chamber Temp.
 
-class CreatbotUtilProfileModes(Enum):
-    ALL = 0
-    SELECT = 1
+PROFILE_MODE_ALL = "ALL"
 
 class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                          octoprint.plugin.SettingsPlugin,
@@ -24,7 +22,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         
         self._sendStartStopCommands = True
         self._replaceHeatedChamberCommand = True
-        self._profileMode = CreatbotUtilProfileModes.ALL.name
+        self._profileMode = PROFILE_MODE_ALL
         self._selectedProfiles = []
 
     def initialize(self):
@@ -34,7 +32,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         self._selectedProfiles = self._settings.get(["selectedProfiles"])
 
     def _enabled_for_current_profile(self):
-        if self._profileMode == CreatbotUtilProfileModes.ALL.name:
+        if self._profileMode == PROFILE_MODE_ALL:
             return True
         profile = self._printer_profile_manager.get_current()
         if not profile:
@@ -55,7 +53,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         return {
             "sendStartStopCommands": True,
             "replaceHeatedChamberCommand": True,
-            "profileMode": CreatbotUtilProfileModes.ALL.name,
+            "profileMode": PROFILE_MODE_ALL,
             "selectedProfiles": []
         }
 
