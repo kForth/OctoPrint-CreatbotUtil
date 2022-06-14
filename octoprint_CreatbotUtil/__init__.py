@@ -83,14 +83,10 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     ##~~ Gcode Sending Hook
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if gcode and self._enabled_for_current_profile():
-            new_gcode = False
-            if self._replaceHeatedChamberCommand and gcode == GCODE_OG_CHAMBER_TEMP:
-                new_gcode = GCODE_SET_CHAMBER_TEMP
-
-            if new_gcode:
-                cmd = new_gcode + cmd[len(gcode):]
-                self._logger.info("Replacing %s command with %s: %s", gcode, new_gcode, cmd)
+        if gcode == GCODE_OG_CHAMBER_TEMP:
+            if self._enabled_for_current_profile() and self._replaceHeatedChamberCommand:
+                cmd = GCODE_SET_CHAMBER_TEMP + cmd[len(gcode):]
+                self._logger.info("Replacing %s command with %s: %s", gcode, GCODE_SET_CHAMBER_TEMP, cmd)
         return cmd,
 
     ## Software Update Hook
