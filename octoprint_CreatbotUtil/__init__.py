@@ -61,7 +61,9 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     def get_assets(self):
         return {
+            'css': ["css/CreatbotUtil.css"],
             'js': ["js/CreatbotUtil.js"],
+            'less': ["less/CreatbotUtil.less"],
         }
 
     ##~~ SettingsPlugin mixin
