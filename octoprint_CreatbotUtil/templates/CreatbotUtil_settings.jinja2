@@ -13,7 +13,13 @@
 
         <label class="checkbox">
             <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
-            {{ _('Send Start/End Serial Print Commands') }}
+            {{ _('Send Start/End Serial Print Commands When Prints Start and Stop') }}
+            <span class="label label-info">M6006/M6007</span>
+        </label>
+
+        <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.startStopOnPause">
+            {{ _('Send Start/End Serial Print Commands When Prints Pause and Resume') }}
             <span class="label label-info">M6006/M6007</span>
         </label>
 

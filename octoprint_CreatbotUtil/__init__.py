@@ -23,6 +23,10 @@ STOP_EVENTS = (
     Events.PRINT_FAILED,
     Events.PRINT_CANCELLED,
 )
+PAUSE_EVENTS = (
+    Events.PRINT_PAUSED,
+    Events.PRINT_RESUMED,    
+)
 
 class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                          octoprint.plugin.SettingsPlugin,
@@ -33,12 +37,14 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         self._logger = logging.getLogger(__name__)
         
         self._sendStartStopCommands = True
+        self._startStopOnPause = True
         self._replaceHeatedChamberCommand = True
         self._profileMode = PROFILE_MODE_ALL
         self._selectedProfiles = []
 
     def initialize(self):
         self._sendStartStopCommands = self._settings.get_boolean(["sendStartStopCommands"])
+        self._startStopOnPause = self._settings.get_boolean(["startStopOnPause"])
         self._replaceHeatedChamberCommand = self._settings.get_boolean(["replaceHeatedChamberCommand"])
         self._profileMode = self._settings.get(["profileMode"])
         self._selectedProfiles = self._settings.get(["selectedProfiles"])
@@ -59,6 +65,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
     def get_settings_defaults(self):
         return {
             "sendStartStopCommands": True,
+            "startStopOnPause": True,
             "replaceHeatedChamberCommand": True,
             "profileMode": PROFILE_MODE_ALL,
             "selectedProfiles": []
@@ -81,15 +88,17 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     # ~~ EventHandlerPlugin hook
     def on_event(self, event, payload):
-        if event not in START_STOP_EVENTS:
+        if event not in START_STOP_EVENTS and not (
+            self._startStopOnPause and event in PAUSE_EVENTS
+        ):
             return
         if not self._enabled_for_current_profile():
             return
         if self._sendStartStopCommands:
-            if event == Events.PRINT_STARTED:
+            if event == Events.PRINT_STARTED or event == Events.PRINT_RESUMED:
                 self._logger.info("Starting Serial Print")
                 self._printer.commands([GCODE_START_SERIAL_PRINT])
-            elif event in STOP_EVENTS:
+            elif event in STOP_EVENTS or event == Events.PRINT_PAUSED:
                 self._logger.info("Stopping Serial Print")
                 self._printer.commands([GCODE_STOP_SERIAL_PRINT])
 
