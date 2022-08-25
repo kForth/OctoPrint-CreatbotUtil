@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build less",
+            "type": "shell",
+            "command": "lessc --clean-css octoprint_CreatbotUtil/static/less/CreatbotUtil.less octoprint_CreatbotUtil/static/css/CreatbotUtil.css",
+            "problemMatcher": ["$lessc"]
+        }
+    ]
+}
