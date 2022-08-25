@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-import octoprint.plugin
-from octoprint.events import Events
 import logging
 
-GCODE_START_SERIAL_PRINT =  "M6006" # Start Serial print
-GCODE_STOP_SERIAL_PRINT =   "M6007" # Stop Serial print
-GCODE_OG_CHAMBER_TEMP =     "M141"  # Original Marlin 'Set Chamber Temp' command
-GCODE_SET_CHAMBER_TEMP =    "M6013" # (like M140) Set Chamber Temp.
+import octoprint.plugin
+from octoprint.events import Events
+
+GCODE_START_SERIAL_PRINT = "M6006"  # Start Serial print
+GCODE_STOP_SERIAL_PRINT = "M6007"  # Stop Serial print
+GCODE_OG_CHAMBER_TEMP = "M141"  # Original Marlin 'Set Chamber Temp' command
+GCODE_SET_CHAMBER_TEMP = "M6013"  # (like M140) Set Chamber Temp.
 
 PROFILE_MODE_ALL = "ALL"
 
@@ -28,6 +29,7 @@ PAUSE_EVENTS = (
     Events.PRINT_RESUMED,    
 )
 
+
 class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                          octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.AssetPlugin,
@@ -35,7 +37,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     def __init__(self):
         self._logger = logging.getLogger(__name__)
-        
+
         self._sendStartStopCommands = True
         self._startStopOnPause = True
         self._replaceHeatedChamberCommand = True
@@ -55,13 +57,15 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         profile = self._printer_profile_manager.get_current()
         return profile and profile.get('id', None) in self._selectedProfiles
 
-    ##~~ AssetPlugin
+    ##~~ AssetPlugin mixin
+
     def get_assets(self):
         return {
             'js': ["js/CreatbotUtil.js"],
         }
 
-    ##~~ SettingsPlugin
+    ##~~ SettingsPlugin mixin
+
     def get_settings_defaults(self):
         return {
             "sendStartStopCommands": True,
@@ -75,7 +79,8 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self.initialize()
 
-    ##~~ TemplatePlugin
+    ##~~ TemplatePlugin mixin
+
     def get_template_configs(self):
         return [
             {
@@ -87,6 +92,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         ]
 
     # ~~ EventHandlerPlugin hook
+
     def on_event(self, event, payload):
         if event not in START_STOP_EVENTS and not (
             self._startStopOnPause and event in PAUSE_EVENTS
@@ -103,6 +109,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                 self._printer.commands([GCODE_STOP_SERIAL_PRINT])
 
     ##~~ Gcode Sending Hook
+
     def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         if gcode == GCODE_OG_CHAMBER_TEMP:
             if self._enabled_for_current_profile() and self._replaceHeatedChamberCommand:
@@ -111,6 +118,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         return cmd,
 
     ## Software Update Hook
+
     def get_update_information(self):
         return dict(
             CreatbotUtil=dict(
@@ -138,4 +146,3 @@ __plugin_hooks__ = {
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
     "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook
 }
-
