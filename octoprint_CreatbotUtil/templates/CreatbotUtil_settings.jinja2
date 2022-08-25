@@ -2,54 +2,55 @@
 
 <form class="form-horizontal" onsubmit="return false;">
 
+    <legend>Features</legend>
+    <fieldset>
+        <div class="control-group">
+            {#<label class="checkbox">
+                <input type="checkbox" data-bind="checked: sendPauseResumeCommands">
+                {{ _('Send Pause/Resume Print Commands') }}
+                <span class="label label-info">M6001/M6002</span>
+            </label>#}
+
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: sendStartStopCommands">
+                {{ _('Send Start/End Serial Print Commands When Prints Start and Stop') }}
+                <span class="label label-info">M6006/M6007</span>
+            </label>
+
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: startStopOnPause">
+                {{ _('Send Start/End Serial Print Commands When Prints Pause and Resume') }}
+                <span class="label label-info">M6006/M6007</span>
+            </label>
+
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: replaceHeatedChamberCommand">
+                {{ _('Replace Heated Chamber Command') }}
+                <span class="label label-important">M141</span>
+                <i class="fas fa-caret-right"></i>
+                <span class="label label-info">M6013</span>
+            </label>
+            
+            {#<label class="checkbox">
+                <input type="checkbox" data-bind="checked: replaceSdCommandsWithUsb">
+                {{ _('Replace SD Card with USB Disk') }}
+                <span class="label label-important">M20-M32,M92</span>
+                <i class="fas fa-caret-right"></i>
+                <span class="label label-info">M6020-M6033</span>
+            </label>#}
+        </div>
+    </fieldset>
+
+
+    <legend>Printer Profiles</legend>     
     <div class="control-group">
-        <legend>Features</legend>
-        
-        {#<label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendPauseResumeCommands">
-            {{ _('Send Pause/Resume Print Commands') }}
-            <span class="label label-info">M6001/M6002</span>
-        </label>#}
-
-        <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.sendStartStopCommands">
-            {{ _('Send Start/End Serial Print Commands When Prints Start and Stop') }}
-            <span class="label label-info">M6006/M6007</span>
-        </label>
-
-        <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.startStopOnPause">
-            {{ _('Send Start/End Serial Print Commands When Prints Pause and Resume') }}
-            <span class="label label-info">M6006/M6007</span>
-        </label>
-
-        <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceHeatedChamberCommand">
-            {{ _('Replace Heated Chamber Command') }}
-            <span class="label label-important">M141</span>
-            <i class="fas fa-caret-right"></i>
-            <span class="label label-info">M6013</span>
-        </label>
-        
-        {#<label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.CreatbotUtil.replaceSdCommandsWithUsb">
-            {{ _('Replace SD Card with USB Disk') }}
-            <span class="label label-important">M20-M32,M92</span>
-            <i class="fas fa-caret-right"></i>
-            <span class="label label-info">M6020-M6033</span>
-        </label>#}
-    </div>
-
-    <div class="control-group">
-        <legend>Printer Profiles</legend>     
-
         <fieldset class="control-group" id="creatbot-util-profile-mode">
             <label class="radio">
-                <input type="radio" value="ALL" name="creatbotUtilProfileModeGroup" data-bind="checked: settings.plugins.CreatbotUtil.profileMode" checked>
+                <input type="radio" value="ALL" name="creatbotUtilProfileModeGroup" data-bind="checked: profileMode">
                 {{ _('Enable For All Printer Profiles') }}
             </label>
             <label class="radio">
-                <input type="radio" value="SELECT" name="creatbotUtilProfileModeGroup" data-bind="checked: settings.plugins.CreatbotUtil.profileMode">
+                <input type="radio" value="SELECT" name="creatbotUtilProfileModeGroup" data-bind="checked: profileMode">
                 {{ _('Enable For Selected Profiles Only') }}
             </label>
         </fieldset>
@@ -58,10 +59,11 @@
             {{ _('Selected Profiles') }}:
             <br>
             <select class="span9" id="creatbot-util-profile-list" multiple="true" data-bind="
+                disable: profileMode() === 'ALL',
                 options: printerProfiles.profiles.items(),
                 optionsValue: item => item.id,
                 optionsText: item => item.name,
-                selectedOptions: settings.plugins.CreatbotUtil.selectedProfiles,
+                selectedOptions: selectedProfiles,
                 event: { }">
             </select>
         </label>

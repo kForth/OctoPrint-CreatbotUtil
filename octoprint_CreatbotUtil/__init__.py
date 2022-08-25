@@ -82,7 +82,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                 "type": "settings",
                 "name": "CreatBot Util",
                 "template": "CreatbotUtil_settings.jinja2",
-                "custom_bindings": False,
+                "custom_bindings": True,
             }
         ]
 

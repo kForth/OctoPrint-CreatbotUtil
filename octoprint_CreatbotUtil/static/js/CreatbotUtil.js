@@ -8,21 +8,23 @@ $(function () {
   function CreatbotUtilViewModel(parameters) {
     var self = this;
 
-    self.settings = parameters[0];
+    self.settingsView = parameters[0];
+    self.printerProfiles = parameters[1];
 
-    self.initializeSettings = function (){
-      // Callback function to enable/disable profile list based on radio buttons.
-      self.onProfileModeChange = function () {
-        let val = $("input[name='creatbotUtilProfileModeGroup']:checked").val();
-        $("#creatbot-util-profile-list").attr('disabled', val == "ALL");
-      };
-      $("#creatbot-util-profile-mode").on('change', self.onProfileModeChange);
-  
-      // Enable/Disable the profile list when the settings page is opened.
-      $("#settings_plugin_CreatbotUtil_link").on('click', self.onProfileModeChange);
+    self.sendStartStopCommands = ko.observable(undefined);
+    self.startStopOnPause = ko.observable(undefined);
+    self.replaceHeatedChamberCommand = ko.observable(undefined);
+    self.profileMode = ko.observable(undefined);
+    self.selectedProfiles = ko.observableArray([]);
+
+    self.onBeforeBinding = function () {
+      var s = self.settingsView.settings.plugins.CreatbotUtil;
+      self.sendStartStopCommands(s.sendStartStopCommands());
+      self.startStopOnPause(s.startStopOnPause());
+      self.replaceHeatedChamberCommand(s.replaceHeatedChamberCommand());
+      self.profileMode(s.profileMode());
+      self.selectedProfiles(s.selectedProfiles());
     };
-
-    self.initializeSettings();
   }
 
   /* view model class, parameters for constructor, container to bind to
@@ -31,7 +33,9 @@ $(function () {
    */
   OCTOPRINT_VIEWMODELS.push({
     construct: CreatbotUtilViewModel,
-    dependencies: ["settingsViewModel"],
-    elements: []
+    dependencies: ["settingsViewModel", "printerProfilesViewModel"],
+    elements: [
+      "#settings_plugin_CreatbotUtil",
+    ]
   });
 });
