@@ -41,6 +41,53 @@
         </div>
     </fieldset>
 
+    <legend>Printer Settings</legend>
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label">{{ _('Time Used') }}</label>
+            <div class="controls">
+                <div class="input-append">
+                    <input type="number" min="0" step="1" data-bind="
+                        value: usedTime,
+                        event: { blur: resetUsedTimeDisplay, focus: cancelUsedTimeDisplayReset },
+                        css: { pulsate_text_opacity: usedTimeResetter() !== undefined }">
+                    <span class="add-on" title="{{ _('milliseconds') }}">{{ _('ms') }}</span>
+                    <button class="btn" data-bind="enable: printerState.isOperational() && usedTime(), click: sendUsedTimeCommand">
+                        {{ _('Set') }}
+                    </button>
+                </div>
+                <span class="help-inline">
+                {%- trans %}
+                    Set the printer's 'Time Used' using the <span class="label label-info">M6008</span> command.
+                    <br>
+                    Note: This setting can only be set, there is no way to show the current setting.
+                {%- endtrans %}
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">{{ _('Registered Time') }}</label>
+            <div class="controls">
+                <div class="input-append">
+                    <input type="number" min="0" step="0.1" data-bind="
+                        value: regTime,
+                        event: { blur: resetRegTimeDisplay, focus: cancelRegTimeDisplayReset },
+                        css: { pulsate_text_opacity: regTimeResetter() !== undefined }">
+                    <span class="add-on" title="{{ _('seconds') }}">{{ _('s') }}</span>
+                    <button class="btn" data-bind="enable: printerState.isOperational() && regTime(), click: sendRegTimeCommand">
+                        {{ _('Set') }}
+                    </button>
+                </div>
+                <span class="help-inline">
+                {%- trans %}
+                    Set the printer's 'Registered Time' using the <span class="label label-info">M6009</span> command.
+                    <br>
+                    Note: This setting can only be set, there is no way to show the current setting.
+                {%- endtrans %}
+                </span>
+            </div>
+        </div>
+    </fieldset>
 
     <legend>Printer Profiles</legend>     
     <div class="control-group">
