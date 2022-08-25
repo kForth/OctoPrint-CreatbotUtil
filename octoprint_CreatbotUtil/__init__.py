@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import octoprint.plugin
+from octoprint.events import Events
 import logging
 
 GCODE_START_SERIAL_PRINT =  "M6006" # Start Serial print
@@ -10,6 +11,18 @@ GCODE_OG_CHAMBER_TEMP =     "M141"  # Original Marlin 'Set Chamber Temp' command
 GCODE_SET_CHAMBER_TEMP =    "M6013" # (like M140) Set Chamber Temp.
 
 PROFILE_MODE_ALL = "ALL"
+
+START_STOP_EVENTS = (
+    Events.PRINT_STARTED,
+    Events.PRINT_DONE,
+    Events.PRINT_FAILED,
+    Events.PRINT_CANCELLED,
+)
+STOP_EVENTS = (
+    Events.PRINT_DONE,
+    Events.PRINT_FAILED,
+    Events.PRINT_CANCELLED,
+)
 
 class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                          octoprint.plugin.SettingsPlugin,
@@ -68,15 +81,15 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     # ~~ EventHandlerPlugin hook
     def on_event(self, event, payload):
-        if event not in ("PrintStarted", "PrintStopped", "PrintCancelled", "PrintDone"):
+        if event not in START_STOP_EVENTS:
             return
         if not self._enabled_for_current_profile():
             return
         if self._sendStartStopCommands:
-            if event == "PrintStarted":
+            if event == Events.PRINT_STARTED:
                 self._logger.info("Starting Serial Print")
                 self._printer.commands([GCODE_START_SERIAL_PRINT])
-            elif event in ("PrintStopped", "PrintCancelled", "PrintDone"):
+            elif event in STOP_EVENTS:
                 self._logger.info("Stopping Serial Print")
                 self._printer.commands([GCODE_STOP_SERIAL_PRINT])
 
