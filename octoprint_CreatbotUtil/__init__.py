@@ -80,7 +80,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         return [
             {
                 "type": "settings",
-                "name": "Creatbot Util",
+                "name": "CreatBot Util",
                 "template": "CreatbotUtil_settings.jinja2",
                 "custom_bindings": False,
             }
@@ -131,7 +131,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
 __plugin_name__ = "CreatbotUtil"
 __plugin_version__ = "1.1.1"
-__plugin_description__ = "Various utility functions to make OctoPrint work better with Creatbot printers."
+__plugin_description__ = "Various utility functions to make OctoPrint work better with CreatBot printers."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
