@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import logging
 
 import octoprint.plugin
@@ -26,15 +23,16 @@ STOP_EVENTS = (
 )
 PAUSE_EVENTS = (
     Events.PRINT_PAUSED,
-    Events.PRINT_RESUMED,    
+    Events.PRINT_RESUMED,
 )
 
 
-class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
-                         octoprint.plugin.SettingsPlugin,
-                         octoprint.plugin.AssetPlugin,
-                         octoprint.plugin.TemplatePlugin):
-
+class CreatbotUtilPlugin(
+    octoprint.plugin.EventHandlerPlugin,
+    octoprint.plugin.SettingsPlugin,
+    octoprint.plugin.AssetPlugin,
+    octoprint.plugin.TemplatePlugin,
+):
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
@@ -45,9 +43,13 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         self._selectedProfiles = []
 
     def initialize(self):
-        self._sendStartStopCommands = self._settings.get_boolean(["sendStartStopCommands"])
+        self._sendStartStopCommands = self._settings.get_boolean(
+            ["sendStartStopCommands"]
+        )
         self._startStopOnPause = self._settings.get_boolean(["startStopOnPause"])
-        self._replaceHeatedChamberCommand = self._settings.get_boolean(["replaceHeatedChamberCommand"])
+        self._replaceHeatedChamberCommand = self._settings.get_boolean(
+            ["replaceHeatedChamberCommand"]
+        )
         self._profileMode = self._settings.get(["profileMode"])
         self._selectedProfiles = self._settings.get(["selectedProfiles"])
 
@@ -55,15 +57,15 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
         if self._profileMode == PROFILE_MODE_ALL:
             return True
         profile = self._printer_profile_manager.get_current()
-        return profile and profile.get('id', None) in self._selectedProfiles
+        return profile and profile.get("id", None) in self._selectedProfiles
 
     ##~~ AssetPlugin mixin
 
     def get_assets(self):
         return {
-            'css': ["css/CreatbotUtil.css"],
-            'js': ["js/CreatbotUtil.js"],
-            'less': ["less/CreatbotUtil.less"],
+            "css": ["css/CreatbotUtil.css"],
+            "js": ["js/CreatbotUtil.js"],
+            "less": ["less/CreatbotUtil.less"],
         }
 
     ##~~ SettingsPlugin mixin
@@ -74,7 +76,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
             "startStopOnPause": True,
             "replaceHeatedChamberCommand": True,
             "profileMode": PROFILE_MODE_ALL,
-            "selectedProfiles": []
+            "selectedProfiles": [],
         }
 
     def on_settings_save(self, data):
@@ -112,12 +114,16 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
     ##~~ Gcode Sending Hook
 
-    def gcode_sending_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+    def gcode_sending_hook(
+        self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs
+    ):
         if gcode == GCODE_OG_CHAMBER_TEMP:
             if self._enabled_for_current_profile() and self._replaceHeatedChamberCommand:
-                cmd = GCODE_SET_CHAMBER_TEMP + cmd[len(gcode):]
-                self._logger.info("Replacing %s command with %s: %s", gcode, GCODE_SET_CHAMBER_TEMP, cmd)
-        return cmd,
+                cmd = GCODE_SET_CHAMBER_TEMP + cmd[len(gcode) :]
+                self._logger.info(
+                    "Replacing %s command with %s: %s", gcode, GCODE_SET_CHAMBER_TEMP, cmd
+                )
+        return (cmd,)
 
     ## Software Update Hook
 
@@ -130,9 +136,7 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
                 user="kforth",
                 repo="OctoPrint-CreatbotUtil",
                 current=self._plugin_version,
-                stable_branch=dict(
-                    name="Stable", branch="main", comittish=["main"]
-                ),
+                stable_branch=dict(name="Stable", branch="main"),
                 # update method: pip
                 pip="https://github.com/kforth/OctoPrint-CreatbotUtil/archive/{target_version}.zip",
             )
@@ -141,10 +145,12 @@ class CreatbotUtilPlugin(octoprint.plugin.EventHandlerPlugin,
 
 __plugin_name__ = "CreatbotUtil"
 __plugin_version__ = "1.1.1"
-__plugin_description__ = "Various utility functions to make OctoPrint work better with CreatBot printers."
+__plugin_description__ = (
+    "Various utility functions to make OctoPrint work better with CreatBot printers."
+)
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = CreatbotUtilPlugin()
 __plugin_hooks__ = {
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook
+    "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.gcode_sending_hook,
 }

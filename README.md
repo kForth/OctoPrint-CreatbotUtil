@@ -17,7 +17,7 @@ This plugin add various utility functions to make OctoPrint work better with Cre
 
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html).
 
-Open OctoPrint Settings (wrench icon) -> Plugin Mananger -> Get More -> Paste the url from below in the "... from URL" field. 
+Open OctoPrint Settings (wrench icon) -> Plugin Manager -> Get More -> Paste the url from below in the "... from URL" field.
 
 > https://github.com/kForth/OctoPrint-CreatbotUtil/archive/main.zip
 
