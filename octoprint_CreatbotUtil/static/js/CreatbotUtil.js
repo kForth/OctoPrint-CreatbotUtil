@@ -237,13 +237,20 @@ $(function () {
 
         self.onBeforeBinding = function () {
             self.initializeControls();
+            self._settings = self.settingsView.settings.plugins.CreatbotUtil;
+            self._writeSettings(self._settings, self);
+        };
+        
+        self.onSettingsBeforeSave = function () {
+            self._writeSettings(self, self._settings);
+        };
 
-            var s = self.settingsView.settings.plugins.CreatbotUtil;
-            self.sendStartStopCommands(s.sendStartStopCommands());
-            self.startStopOnPause(s.startStopOnPause());
-            self.replaceHeatedChamberCommand(s.replaceHeatedChamberCommand());
-            self.profileMode(s.profileMode());
-            self.selectedProfiles(s.selectedProfiles());
+        self._writeSettings = function (source, target) {
+            target.sendStartStopCommands(source.sendStartStopCommands());
+            target.startStopOnPause(source.startStopOnPause());
+            target.replaceHeatedChamberCommand(source.replaceHeatedChamberCommand());
+            target.profileMode(source.profileMode());
+            target.selectedProfiles(source.selectedProfiles());
         };
     }
 
