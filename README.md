@@ -1,6 +1,16 @@
 
 # CreatBot Util
 
+[![For OctoPrint](https://img.shields.io/badge/OctoPrint--CreatbotUtil-white?style=flat&logo=OctoPrint)](https://plugins.octoprint.org/plugins/CreatbotUtil/)
+[![Active Instances](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Active%20Instances&query=%24%5B%3F%28%40.id%3D%3D%22CreatbotUtil%22%29%5D.stats.instances_month&url=https%3A%2F%2Fplugins.octoprint.org%2Fplugins.json&logo=OctoPrint&labelColor=white&style=flat)](https://plugins.octoprint.org/plugins/CreatbotUtil/)
+[![New This Month](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=New%20Monthly&query=%24%5B%3F%28%40.id%3D%3D%22CreatbotUtil%22%29%5D.stats.install_events_month&url=https%3A%2F%2Fplugins.octoprint.org%2Fplugins.json&logo=OctoPrint&labelColor=white&style=flat)](https://plugins.octoprint.org/plugins/CreatbotUtil/)
+[![New This Week](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=New%20Weekly&query=%24%5B%3F%28%40.id%3D%3D%22CreatbotUtil%22%29%5D.stats.install_events_week&url=https%3A%2F%2Fplugins.octoprint.org%2Fplugins.json&logo=OctoPrint&labelColor=white&style=flat)](https://plugins.octoprint.org/plugins/CreatbotUtil/)
+
+[![GitHub Forks](https://img.shields.io/github/forks/kforth/OctoPrint-CreatbotUtil?label=Forks&logo=GitHub&logoColor=black&labelColor=white&color=blue)](https://github.com/kForth/OctoPrint-CreatbotUtil/network/members)
+[![GitHub Stars](https://img.shields.io/github/stars/kforth/OctoPrint-CreatbotUtil?label=Stars&logo=GitHub&logoColor=black&labelColor=white&color=blue)](https://github.com/kForth/OctoPrint-CreatbotUtil/stargazers)
+[![GitHub Watchers](https://img.shields.io/github/watchers/kforth/OctoPrint-CreatbotUtil?label=Watchers&logo=GitHub&logoColor=black&labelColor=white&color=blue)](https://github.com/kForth/OctoPrint-CreatbotUtil/watchers)
+![License](https://img.shields.io/github/license/kforth/OctoPrint-CreatbotUtil?labelColor=white&color=blue)
+
 This plugin add various utility functions to make OctoPrint work better with CreatBot printers.
 
 ## Features
